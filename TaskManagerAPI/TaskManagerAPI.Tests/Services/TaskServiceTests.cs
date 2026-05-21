@@ -3,30 +3,28 @@ using TaskManagerAPI.Exceptions;
 using TaskManagerAPI.Models;
 using TaskManagerAPI.Repositories;
 using TaskManagerAPI.Services;
+using TaskManagerAPI.Tests.Support;
 
 namespace TaskManagerAPI.Tests.Services;
 
-public class TaskServiceTests
+public class TaskServiceTests : AutoFixtureTestBase
 {
     private readonly Mock<ITaskRepository> _repositoryMock = new();
-    private readonly TaskService _sut;
+    private readonly TaskService _taskService;
 
     public TaskServiceTests()
     {
-        _sut = new TaskService(_repositoryMock.Object);
+        _taskService = new TaskService(_repositoryMock.Object);
     }
 
     [Fact]
     public async Task GetAllTasksAsync_ReturnsRepositoryResult()
     {
-        var tasks = new List<TaskItem>
-        {
-            new() { Id = 1, Title = "One", IsComplete = false }
-        };
+        var tasks = Fixture.CreateMany<TaskItem>(3).ToList();
         _repositoryMock.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(tasks);
 
-        var result = await _sut.GetAllTasksAsync();
+        var result = await _taskService.GetAllTasksAsync();
 
         Assert.Same(tasks, result);
         _repositoryMock.Verify(r => r.GetAllAsync(It.IsAny<CancellationToken>()), Times.Once);
@@ -35,14 +33,18 @@ public class TaskServiceTests
     [Fact]
     public async Task CreateTaskAsync_WithValidTitle_ReturnsCreatedTask()
     {
-        var created = new TaskItem { Id = 1, Title = "New task", IsComplete = false };
-        _repositoryMock.Setup(r => r.AddAsync("New task", It.IsAny<CancellationToken>()))
+        var title = Fixture.CreateTitle();
+        var created = Fixture.Build<TaskItem>()
+            .With(t => t.Title, title)
+            .With(t => t.IsComplete, false)
+            .Create();
+        _repositoryMock.Setup(r => r.AddAsync(title, It.IsAny<CancellationToken>()))
             .ReturnsAsync(created);
 
-        var result = await _sut.CreateTaskAsync("New task");
+        var result = await _taskService.CreateTaskAsync(title);
 
         Assert.Equal(created, result);
-        _repositoryMock.Verify(r => r.AddAsync("New task", It.IsAny<CancellationToken>()), Times.Once);
+        _repositoryMock.Verify(r => r.AddAsync(title, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Theory]
@@ -51,7 +53,7 @@ public class TaskServiceTests
     [InlineData("   ")]
     public async Task CreateTaskAsync_WithInvalidTitle_ThrowsArgumentException(string? title)
     {
-        await Assert.ThrowsAnyAsync<ArgumentException>(() => _sut.CreateTaskAsync(title!));
+        await Assert.ThrowsAnyAsync<ArgumentException>(() => _taskService.CreateTaskAsync(title!));
 
         _repositoryMock.Verify(r => r.AddAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -59,23 +61,25 @@ public class TaskServiceTests
     [Fact]
     public async Task DeleteTaskAsync_WithExistingId_CompletesSuccessfully()
     {
-        _repositoryMock.Setup(r => r.DeleteAsync(1, It.IsAny<CancellationToken>()))
+        var id = Fixture.CreatePositiveId();
+        _repositoryMock.Setup(r => r.DeleteAsync(id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
-        await _sut.DeleteTaskAsync(1);
+        await _taskService.DeleteTaskAsync(id);
 
-        _repositoryMock.Verify(r => r.DeleteAsync(1, It.IsAny<CancellationToken>()), Times.Once);
+        _repositoryMock.Verify(r => r.DeleteAsync(id, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
     public async Task DeleteTaskAsync_WithNonExistentId_ThrowsTaskNotFoundException()
     {
-        _repositoryMock.Setup(r => r.DeleteAsync(42, It.IsAny<CancellationToken>()))
+        var id = Fixture.CreatePositiveId();
+        _repositoryMock.Setup(r => r.DeleteAsync(id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
-        var exception = await Assert.ThrowsAsync<TaskNotFoundException>(() => _sut.DeleteTaskAsync(42));
+        var exception = await Assert.ThrowsAsync<TaskNotFoundException>(() => _taskService.DeleteTaskAsync(id));
 
-        Assert.Equal(42, exception.TaskId);
+        Assert.Equal(id, exception.TaskId);
     }
 
     [Theory]
@@ -83,7 +87,7 @@ public class TaskServiceTests
     [InlineData(-1)]
     public async Task DeleteTaskAsync_WithInvalidId_ThrowsArgumentOutOfRangeException(int id)
     {
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _sut.DeleteTaskAsync(id));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _taskService.DeleteTaskAsync(id));
 
         _repositoryMock.Verify(r => r.DeleteAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
     }

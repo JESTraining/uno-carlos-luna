@@ -6,10 +6,11 @@ using TaskManagerAPI.Exceptions;
 using TaskManagerAPI.Models;
 using TaskManagerAPI.Responses;
 using TaskManagerAPI.Services;
+using TaskManagerAPI.Tests.Support;
 
 namespace TaskManagerAPI.Tests.Controllers;
 
-public class TasksControllerTests
+public class TasksControllerTests : AutoFixtureTestBase
 {
     private readonly Mock<ITaskService> _serviceMock = new();
     private readonly TasksController _sut;
@@ -22,10 +23,7 @@ public class TasksControllerTests
     [Fact]
     public async Task GetAll_ReturnsOkWithWrappedTasks()
     {
-        var tasks = new List<TaskItem>
-        {
-            new() { Id = 1, Title = "Task", IsComplete = false }
-        };
+        var tasks = Fixture.CreateMany<TaskItem>(2).ToList();
         _serviceMock.Setup(s => s.GetAllTasksAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(tasks);
 
@@ -40,11 +38,15 @@ public class TasksControllerTests
     [Fact]
     public async Task Create_WithValidRequest_ReturnsCreatedWithWrappedTask()
     {
-        var created = new TaskItem { Id = 5, Title = "New", IsComplete = false };
-        _serviceMock.Setup(s => s.CreateTaskAsync("New", It.IsAny<CancellationToken>()))
+        var request = Fixture.Create<CreateTaskRequest>();
+        var created = Fixture.Build<TaskItem>()
+            .With(t => t.Title, request.Title)
+            .With(t => t.IsComplete, false)
+            .Create();
+        _serviceMock.Setup(s => s.CreateTaskAsync(request.Title, It.IsAny<CancellationToken>()))
             .ReturnsAsync(created);
 
-        var result = await _sut.Create(new CreateTaskRequest { Title = "New" }, CancellationToken.None);
+        var result = await _sut.Create(request, CancellationToken.None);
 
         var createdResult = Assert.IsType<CreatedAtActionResult>(result.Result);
         Assert.Equal(nameof(TasksController.GetAll), createdResult.ActionName);
@@ -57,25 +59,27 @@ public class TasksControllerTests
     [Fact]
     public async Task Delete_WithExistingId_ReturnsOkWithSuccessMessage()
     {
-        _serviceMock.Setup(s => s.DeleteTaskAsync(3, It.IsAny<CancellationToken>()))
+        var id = Fixture.CreatePositiveId();
+        _serviceMock.Setup(s => s.DeleteTaskAsync(id, It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
-        var result = await _sut.Delete(3, CancellationToken.None);
+        var result = await _sut.Delete(id, CancellationToken.None);
 
         var ok = Assert.IsType<OkObjectResult>(result.Result);
         var response = Assert.IsType<ApiResponse<object?>>(ok.Value);
         Assert.True(response.Success);
         Assert.Equal("Task deleted successfully.", response.Message);
         Assert.Null(response.Data);
-        _serviceMock.Verify(s => s.DeleteTaskAsync(3, It.IsAny<CancellationToken>()), Times.Once);
+        _serviceMock.Verify(s => s.DeleteTaskAsync(id, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
     public async Task Delete_WhenServiceThrowsNotFound_PropagatesException()
     {
-        _serviceMock.Setup(s => s.DeleteTaskAsync(99, It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new TaskNotFoundException(99));
+        var id = Fixture.CreatePositiveId();
+        _serviceMock.Setup(s => s.DeleteTaskAsync(id, It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new TaskNotFoundException(id));
 
-        await Assert.ThrowsAsync<TaskNotFoundException>(() => _sut.Delete(99, CancellationToken.None));
+        await Assert.ThrowsAsync<TaskNotFoundException>(() => _sut.Delete(id, CancellationToken.None));
     }
 }

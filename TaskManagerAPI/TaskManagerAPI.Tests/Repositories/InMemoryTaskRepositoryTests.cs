@@ -1,8 +1,9 @@
 using TaskManagerAPI.Repositories;
+using TaskManagerAPI.Tests.Support;
 
 namespace TaskManagerAPI.Tests.Repositories;
 
-public class InMemoryTaskRepositoryTests
+public class InMemoryTaskRepositoryTests : AutoFixtureTestBase
 {
     [Fact]
     public async Task GetAllAsync_WhenEmpty_ReturnsEmptyList()
@@ -18,11 +19,12 @@ public class InMemoryTaskRepositoryTests
     public async Task AddAsync_WithValidTitle_CreatesTaskWithDefaults()
     {
         var repository = new InMemoryTaskRepository();
+        var rawTitle = $"  {Fixture.CreateTitle()}  ";
 
-        var task = await repository.AddAsync("  Buy groceries  ");
+        var task = await repository.AddAsync(rawTitle);
 
         Assert.Equal(1, task.Id);
-        Assert.Equal("Buy groceries", task.Title);
+        Assert.Equal(rawTitle.Trim(), task.Title);
         Assert.False(task.IsComplete);
     }
 
@@ -30,21 +32,23 @@ public class InMemoryTaskRepositoryTests
     public async Task GetAllAsync_AfterAddingTasks_ReturnsAllTasks()
     {
         var repository = new InMemoryTaskRepository();
-        await repository.AddAsync("Task A");
-        await repository.AddAsync("Task B");
+        var firstTitle = Fixture.CreateTitle();
+        var secondTitle = Fixture.CreateTitle();
+        await repository.AddAsync(firstTitle);
+        await repository.AddAsync(secondTitle);
 
         var result = await repository.GetAllAsync();
 
         Assert.Equal(2, result.Count);
-        Assert.Contains(result, t => t.Title == "Task A");
-        Assert.Contains(result, t => t.Title == "Task B");
+        Assert.Contains(result, t => t.Title == firstTitle);
+        Assert.Contains(result, t => t.Title == secondTitle);
     }
 
     [Fact]
     public async Task DeleteAsync_WithExistingId_RemovesTask()
     {
         var repository = new InMemoryTaskRepository();
-        var task = await repository.AddAsync("To delete");
+        var task = await repository.AddAsync(Fixture.CreateTitle());
 
         var deleted = await repository.DeleteAsync(task.Id);
         var remaining = await repository.GetAllAsync();
@@ -58,7 +62,7 @@ public class InMemoryTaskRepositoryTests
     {
         var repository = new InMemoryTaskRepository();
 
-        var deleted = await repository.DeleteAsync(999);
+        var deleted = await repository.DeleteAsync(Fixture.CreateNonExistentId());
 
         Assert.False(deleted);
     }
