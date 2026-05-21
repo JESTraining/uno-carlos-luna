@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using TaskManagerAPI.Exceptions;
+using TaskManagerAPI.Responses;
 
 namespace TaskManagerAPI.Middleware;
 
@@ -46,7 +47,7 @@ public sealed class ExceptionHandlingMiddleware
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)statusCode;
 
-        var payload = new { error = message };
+        var payload = ApiResponse.Fail(message, errors: [message]);
         await context.Response.WriteAsync(JsonSerializer.Serialize(payload, JsonOptions));
     }
 }

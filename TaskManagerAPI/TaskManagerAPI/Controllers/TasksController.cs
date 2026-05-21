@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using TaskManagerAPI.Dtos;
 using TaskManagerAPI.Models;
+using TaskManagerAPI.Responses;
 using TaskManagerAPI.Services;
 
 namespace TaskManagerAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TasksController : ControllerBase
+public class TasksController : ApiControllerBase
 {
     private readonly ITaskService _taskService;
 
@@ -17,30 +18,30 @@ public class TasksController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IReadOnlyList<TaskItem>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IReadOnlyList<TaskItem>>> GetAll(CancellationToken cancellationToken)
+    [ProducesResponseType(typeof(ApiResponse<IReadOnlyList<TaskItem>>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<TaskItem>>>> GetAll(CancellationToken cancellationToken)
     {
         var tasks = await _taskService.GetAllTasksAsync(cancellationToken);
-        return Ok(tasks);
+        return ApiOk(tasks);
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(TaskItem), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<TaskItem>> Create(
+    [ProducesResponseType(typeof(ApiResponse<TaskItem>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiResponse<object?>), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<ApiResponse<TaskItem>>> Create(
         [FromBody] CreateTaskRequest request,
         CancellationToken cancellationToken)
     {
         var task = await _taskService.CreateTaskAsync(request.Title, cancellationToken);
-        return CreatedAtAction(nameof(GetAll), new { id = task.Id }, task);
+        return ApiCreated(nameof(GetAll), new { id = task.Id }, task, "Task created successfully.");
     }
 
     [HttpDelete("{id:int}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    [ProducesResponseType(typeof(ApiResponse<object?>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<object?>), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ApiResponse<object?>>> Delete(int id, CancellationToken cancellationToken)
     {
         await _taskService.DeleteTaskAsync(id, cancellationToken);
-        return NoContent();
+        return ApiOkMessage("Task deleted successfully.");
     }
 }
