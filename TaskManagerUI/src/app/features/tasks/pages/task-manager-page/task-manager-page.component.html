@@ -1,0 +1,29 @@
+<main class="page">
+  <header class="task-manager-header">
+    <h1>Task Manager</h1>
+    <p>Phase 1 — project structure and basic styling</p>
+  </header>
+
+  <section aria-label="Add task" class="add-task-section">
+    <app-task-form (taskSubmitted)="store.add($event)" />
+  </section>
+
+  <div aria-label="Task container" class="task-container">
+    <section aria-label="Incomplete task list" class="task-list">
+      <h2>Incomplete Tasks</h2>
+      <app-task-list
+        [tasks]="incompleteTasks()"
+        (toggled)="store.toggle($event)"
+        (removed)="store.remove($event)"
+      />
+    </section>
+    <section aria-label="Completed task list" class="task-list">
+      <h2>Completed Tasks</h2>
+      <app-task-list
+        [tasks]="completedTasks()"
+        (toggled)="store.toggle($event)"
+        (removed)="store.remove($event)"
+      />
+    </section>
+  </div>
+</main>

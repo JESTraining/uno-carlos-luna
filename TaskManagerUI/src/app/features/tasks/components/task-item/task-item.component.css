@@ -1,0 +1,38 @@
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: white;
+  border: 1px solid gray;
+  border-radius: 4px;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+span {
+  word-break: break-word;
+}
+
+:host(.complete) span {
+  text-decoration: line-through;
+  color: gray;
+}
+
+button {
+  border: 1px solid red;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  background: white;
+  color: red;
+  cursor: pointer;
+  font-size: 0.8125rem;
+}

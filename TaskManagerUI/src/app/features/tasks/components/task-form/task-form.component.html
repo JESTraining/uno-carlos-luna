@@ -1,0 +1,23 @@
+<form (submit)="onSubmit($event)" novalidate>
+  <label for="task-title">New task</label>
+  <div class="controls">
+    <input
+      id="task-title"
+      type="text"
+      [formControl]="titleControl"
+      placeholder="What needs to be done?"
+      autocomplete="off"
+      aria-describedby="task-title-error"
+    />
+    <button type="submit">Add</button>
+  </div>
+  @if (titleControl.touched && titleControl.invalid) {
+    <p id="task-title-error" role="alert">
+      @if (titleControl.hasError('required')) {
+        Enter a task title.
+      } @else if (titleControl.hasError('maxlength')) {
+        Title cannot exceed 500 characters.
+      }
+    </p>
+  }
+</form>
