@@ -36,4 +36,20 @@ public sealed class TaskService : ITaskService
             throw new TaskNotFoundException(id);
         }
     }
+
+    public async Task<TaskItem> ToggleTaskCompleteAsync(int id, CancellationToken cancellationToken = default)
+    {
+        if (id <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(id), "Task id must be greater than zero.");
+        }
+
+        var updated = await _repository.ToggleCompleteAsync(id, cancellationToken);
+        if (updated is null)
+        {
+            throw new TaskNotFoundException(id);
+        }
+
+        return updated;
+    }
 }

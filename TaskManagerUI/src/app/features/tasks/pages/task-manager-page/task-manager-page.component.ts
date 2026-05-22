@@ -35,6 +35,8 @@ export class TaskManagerPageComponent {
   constructor() {
     effect(() => {
       this.tasks();
+      this.store.loading();
+      this.store.error();
       untracked(() => this.changeDetectorRef.markForCheck());
     });
   }

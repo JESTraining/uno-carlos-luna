@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   inject,
+  input,
   output,
 } from '@angular/core';
 import {
@@ -29,6 +30,7 @@ function requiredNonWhitespace(control: AbstractControl): ValidationErrors | nul
 export class TaskFormComponent {
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
 
+  readonly disabled = input(false);
   readonly taskSubmitted = output<string>();
 
   readonly titleControl = new FormControl('', {

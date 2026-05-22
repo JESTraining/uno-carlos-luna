@@ -9,7 +9,7 @@
       autocomplete="off"
       aria-describedby="task-title-error"
     />
-    <button type="submit">Add</button>
+    <button type="submit" [disabled]="disabled()">Add</button>
   </div>
   @if (titleControl.touched && titleControl.invalid) {
     <p id="task-title-error" role="alert">
