@@ -1,0 +1,55 @@
+.page {
+  width: min(100%, 72rem);
+  margin: 0 auto;
+  padding: 1.5rem 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.add-task-section,
+.task-manager-header {
+  width: 100%;
+  max-width: 36rem;
+  margin: 0 auto;
+}
+
+.task-manager-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.task-manager-header p {
+  margin: 0.25rem 0 0;
+  color: gray;
+  font-size: 0.875rem;
+}
+
+.task-container { 
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.task-list {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+}
+
+.task-list h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.125rem;
+}
+
+@media (min-width: 48rem) {
+  .task-container {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .task-list {
+    max-width: none;
+  }
+}
