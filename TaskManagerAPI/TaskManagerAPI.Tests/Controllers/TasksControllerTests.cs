@@ -82,4 +82,20 @@ public class TasksControllerTests : AutoFixtureTestBase
 
         await Assert.ThrowsAsync<TaskNotFoundException>(() => _sut.Delete(id, CancellationToken.None));
     }
+
+    [Fact]
+    public async Task ToggleComplete_WithExistingId_ReturnsOkWithUpdatedTask()
+    {
+        var id = Fixture.CreatePositiveId();
+        var updated = Fixture.Build<TaskItem>().With(t => t.Id, id).With(t => t.IsComplete, true).Create();
+        _serviceMock.Setup(s => s.ToggleTaskCompleteAsync(id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(updated);
+
+        var result = await _sut.ToggleComplete(id, CancellationToken.None);
+
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var response = Assert.IsType<ApiResponse<TaskItem>>(ok.Value);
+        Assert.True(response.Success);
+        Assert.Same(updated, response.Data);
+    }
 }

@@ -44,4 +44,13 @@ public class TasksController : ApiControllerBase
         await _taskService.DeleteTaskAsync(id, cancellationToken);
         return ApiOkMessage("Task deleted successfully.");
     }
+
+    [HttpPatch("{id:int}/toggle")]
+    [ProducesResponseType(typeof(ApiResponse<TaskItem>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<object?>), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ApiResponse<TaskItem>>> ToggleComplete(int id, CancellationToken cancellationToken)
+    {
+        var task = await _taskService.ToggleTaskCompleteAsync(id, cancellationToken);
+        return ApiOk(task, "Task updated successfully.");
+    }
 }

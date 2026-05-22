@@ -91,4 +91,31 @@ public class TaskServiceTests : AutoFixtureTestBase
 
         _repositoryMock.Verify(r => r.DeleteAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
     }
+
+    [Fact]
+    public async Task ToggleTaskCompleteAsync_WithExistingId_ReturnsUpdatedTask()
+    {
+        var id = Fixture.CreatePositiveId();
+        var updated = Fixture.Build<TaskItem>().With(t => t.Id, id).With(t => t.IsComplete, true).Create();
+        _repositoryMock.Setup(r => r.ToggleCompleteAsync(id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(updated);
+
+        var result = await _taskService.ToggleTaskCompleteAsync(id);
+
+        Assert.Equal(updated, result);
+        _repositoryMock.Verify(r => r.ToggleCompleteAsync(id, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task ToggleTaskCompleteAsync_WithNonExistentId_ThrowsTaskNotFoundException()
+    {
+        var id = Fixture.CreatePositiveId();
+        _repositoryMock.Setup(r => r.ToggleCompleteAsync(id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((TaskItem?)null);
+
+        var exception = await Assert.ThrowsAsync<TaskNotFoundException>(
+            () => _taskService.ToggleTaskCompleteAsync(id));
+
+        Assert.Equal(id, exception.TaskId);
+    }
 }

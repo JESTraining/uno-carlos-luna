@@ -53,4 +53,28 @@ public sealed class InMemoryTaskRepository : ITaskRepository
             return Task.FromResult(true);
         }
     }
+
+    public Task<TaskItem?> ToggleCompleteAsync(int id, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        lock (_lock)
+        {
+            var index = _tasks.FindIndex(t => t.Id == id);
+            if (index < 0)
+            {
+                return Task.FromResult<TaskItem?>(null);
+            }
+
+            var current = _tasks[index];
+            var updated = new TaskItem
+            {
+                Id = current.Id,
+                Title = current.Title,
+                IsComplete = !current.IsComplete
+            };
+            _tasks[index] = updated;
+            return Task.FromResult<TaskItem?>(updated);
+        }
+    }
 }

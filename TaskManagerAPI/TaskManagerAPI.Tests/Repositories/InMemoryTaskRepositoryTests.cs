@@ -66,4 +66,29 @@ public class InMemoryTaskRepositoryTests : AutoFixtureTestBase
 
         Assert.False(deleted);
     }
+
+    [Fact]
+    public async Task ToggleCompleteAsync_WithExistingId_TogglesCompletionState()
+    {
+        var repository = new InMemoryTaskRepository();
+        var task = await repository.AddAsync(Fixture.CreateTitle());
+
+        var firstToggle = await repository.ToggleCompleteAsync(task.Id);
+        var secondToggle = await repository.ToggleCompleteAsync(task.Id);
+
+        Assert.NotNull(firstToggle);
+        Assert.True(firstToggle!.IsComplete);
+        Assert.NotNull(secondToggle);
+        Assert.False(secondToggle!.IsComplete);
+    }
+
+    [Fact]
+    public async Task ToggleCompleteAsync_WithNonExistentId_ReturnsNull()
+    {
+        var repository = new InMemoryTaskRepository();
+
+        var result = await repository.ToggleCompleteAsync(Fixture.CreateNonExistentId());
+
+        Assert.Null(result);
+    }
 }
