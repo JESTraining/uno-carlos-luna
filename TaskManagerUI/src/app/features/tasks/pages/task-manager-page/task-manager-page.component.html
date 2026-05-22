@@ -1,11 +1,15 @@
 <main class="page">
   <header class="task-manager-header">
     <h1>Task Manager</h1>
-    <p>Phase 1 — project structure and basic styling</p>
+    <p>Connected to Task Manager API</p>
   </header>
 
+  @if (store.error(); as errorMessage) {
+    <p class="error-banner" role="alert">{{ errorMessage }}</p>
+  }
+
   <section aria-label="Add task" class="add-task-section">
-    <app-task-form (taskSubmitted)="store.add($event)" />
+    <app-task-form (taskSubmitted)="store.add($event)" [disabled]="store.loading()" />
   </section>
 
   <div aria-label="Task container" class="task-container">

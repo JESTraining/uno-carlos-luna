@@ -1,14 +1,16 @@
 import { ApplicationConfig } from '@angular/core';
+import { provideHttpClient } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 
 import { TASK_REPOSITORY } from './core/repositories/task.repository';
-import { MockTaskRepository } from './features/tasks/data/mock-task.repository';
+import { HttpTaskRepository } from './features/tasks/data/http-task.repository';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    MockTaskRepository,
-    { provide: TASK_REPOSITORY, useExisting: MockTaskRepository },
+    provideHttpClient(),
+    HttpTaskRepository,
+    { provide: TASK_REPOSITORY, useExisting: HttpTaskRepository },
   ],
 };
