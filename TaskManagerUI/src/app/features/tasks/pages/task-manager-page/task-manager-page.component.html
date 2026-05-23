@@ -1,11 +1,10 @@
 <main class="page">
   <header class="task-manager-header">
     <h1>Task Manager</h1>
-    <p>Connected to Task Manager API</p>
   </header>
 
   @if (store.error(); as errorMessage) {
-    <p class="error-banner" role="alert">{{ errorMessage }}</p>
+    <p class="alert alert-error" role="alert">{{ errorMessage }}</p>
   }
 
   <section aria-label="Add task" class="add-task-section">
@@ -13,16 +12,16 @@
   </section>
 
   <div aria-label="Task container" class="task-container">
-    <section aria-label="Incomplete task list" class="task-list">
-      <h2>Incomplete Tasks</h2>
+    <section aria-label="Incomplete task list" class="task-list task-list--pending">
+      <h2><span class="task-list__dot" aria-hidden="true"></span>Incomplete Tasks</h2>
       <app-task-list
         [tasks]="incompleteTasks()"
         (toggled)="store.toggle($event)"
         (removed)="store.remove($event)"
       />
     </section>
-    <section aria-label="Completed task list" class="task-list">
-      <h2>Completed Tasks</h2>
+    <section aria-label="Completed task list" class="task-list task-list--done">
+      <h2><span class="task-list__dot" aria-hidden="true"></span>Completed Tasks</h2>
       <app-task-list
         [tasks]="completedTasks()"
         (toggled)="store.toggle($event)"

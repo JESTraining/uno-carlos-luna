@@ -1,5 +1,9 @@
 ## 📘 1-Week Full Stack Exercise: Simple Task Manager
 
+## 🎬 Demo
+
+Watch the working app demo: [Task Manager.mp4](https://drive.google.com/file/d/1b_cW6QVvTEeeZv9mLGx0gXL9YRAKpZKe/view?usp=drive_link)
+
 ### Core Requirements (Must complete in 5 days)
 
 #### Backend (.NET 8+)
@@ -100,5 +104,5 @@ EXPOSE 80
 
 - GitHub repo with clean commit history
 - `README.md` with setup instructions
-- Screenshot or short video of working app
+- [Demo video](https://drive.google.com/file/d/1b_cW6QVvTEeeZv9mLGx0gXL9YRAKpZKe/view?usp=drive_link)
 - `docker-compose up` works on clean machine

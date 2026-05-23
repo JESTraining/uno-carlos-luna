@@ -13,6 +13,7 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 function requiredNonWhitespace(control: AbstractControl): ValidationErrors | null {
   const value = control.value;
@@ -38,16 +39,30 @@ export class TaskFormComponent {
     validators: [requiredNonWhitespace, Validators.maxLength(500)],
   });
 
+  showFieldError = false;
+
+  constructor() {
+    this.titleControl.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
+      if (this.showFieldError && this.titleControl.valid) {
+        this.showFieldError = false;
+        this.changeDetectorRef.markForCheck();
+      }
+    });
+  }
+
   onSubmit(event: SubmitEvent): void {
     event.preventDefault();
 
     if (this.titleControl.invalid) {
+      this.showFieldError = true;
       this.titleControl.markAsTouched();
       this.changeDetectorRef.markForCheck();
       return;
     }
 
+    this.showFieldError = false;
     this.taskSubmitted.emit(this.titleControl.value.trim());
     this.titleControl.reset();
+    this.changeDetectorRef.markForCheck();
   }
 }

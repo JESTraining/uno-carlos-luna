@@ -19,7 +19,6 @@ export class TaskStore {
   add(title: string): void {
     const trimmed = title.trim();
     if (!trimmed) {
-      this.error.set('Enter a task title.');
       return;
     }
     void this.run(() => this.repository.create(trimmed));
