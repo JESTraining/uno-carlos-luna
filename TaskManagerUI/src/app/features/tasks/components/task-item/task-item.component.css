@@ -4,8 +4,8 @@
   justify-content: space-between;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
-  background: white;
-  border: 1px solid gray;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
 }
 
@@ -24,15 +24,15 @@ span {
 
 :host(.complete) span {
   text-decoration: line-through;
-  color: gray;
+  color: var(--color-text-muted);
 }
 
 button {
-  border: 1px solid red;
+  border: 1px solid var(--color-danger-border);
   border-radius: 4px;
   padding: 0.25rem 0.5rem;
-  background: white;
-  color: red;
+  background: var(--color-surface);
+  color: var(--color-danger);
   cursor: pointer;
   font-size: 0.8125rem;
 }

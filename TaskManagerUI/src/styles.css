@@ -1,3 +1,16 @@
+:root {
+  --color-bg: #ffffff;
+  --color-surface: #ffffff;
+  --color-text: #000000;
+  --color-text-muted: #808080;
+  --color-border: #808080;
+  --color-primary: #0000ff;
+  --color-on-primary: #ffffff;
+  --color-danger: #ff0000;
+  --color-danger-border: #ff0000;
+  --color-danger-surface: #ffffff;
+}
+
 *,
 *::before,
 *::after {
@@ -8,8 +21,8 @@ body {
   margin: 0;
   font-family: system-ui, sans-serif;
   line-height: 1.5;
-  color: black;
-  background: white;
+  color: var(--color-text);
+  background: var(--color-bg);
 }
 
 button,
