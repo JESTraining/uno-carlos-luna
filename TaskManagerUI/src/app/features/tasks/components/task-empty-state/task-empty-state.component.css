@@ -1,4 +1,14 @@
-.empty {
+:host {
+  display: block;
+}
+
+.empty-state {
   margin: 0;
+  padding: 1.25rem 1rem;
+  text-align: center;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-accent);
+  border: 1px dashed var(--color-secondary-border);
   color: var(--color-text-muted);
+  font-size: 0.9375rem;
 }

@@ -5,6 +5,7 @@ import { Task } from '../../../../core/models/task.model';
   selector: 'li[task-item]',
   standalone: true,
   host: {
+    class: 'card',
     '[class.complete]': 'task().isComplete',
   },
   templateUrl: './task-item.component.html',

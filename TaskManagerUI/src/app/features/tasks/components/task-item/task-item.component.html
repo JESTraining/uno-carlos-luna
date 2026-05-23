@@ -8,6 +8,7 @@
   <span>{{ task().title }}</span>
 </label>
 <button
+  class="btn btn-danger"
   type="button"
   (click)="removed.emit(task().id)"
   [attr.aria-label]="'Delete ' + task().title"
