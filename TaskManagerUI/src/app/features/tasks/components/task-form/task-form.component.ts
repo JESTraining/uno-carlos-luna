@@ -4,7 +4,6 @@ import {
   Component,
   inject,
   input,
-  OnInit,
   output,
 } from '@angular/core';
 import {
@@ -29,7 +28,7 @@ function requiredNonWhitespace(control: AbstractControl): ValidationErrors | nul
   styleUrl: './task-form.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TaskFormComponent implements OnInit {
+export class TaskFormComponent {
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
 
   readonly disabled = input(false);
@@ -42,7 +41,7 @@ export class TaskFormComponent implements OnInit {
 
   showFieldError = false;
 
-  ngOnInit(): void {
+  constructor() {
     this.titleControl.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
       if (this.showFieldError && this.titleControl.valid) {
         this.showFieldError = false;
