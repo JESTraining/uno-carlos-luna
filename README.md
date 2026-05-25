@@ -7,24 +7,24 @@ Watch the working app demo: [Task Manager.mp4](https://drive.google.com/file/d/1
 ### Core Requirements (Must complete in 5 days)
 
 #### Backend (.NET 8+)
-- [ ] REST API with 3 endpoints:
+- [x] REST API with 3 endpoints:
   - `GET /api/tasks` – get all tasks
   - `POST /api/tasks` – create task (title only)
   - `DELETE /api/tasks/{id}` – delete task
-- [ ] In-memory storage (List<Task>) – no database needed
-- [ ] Task entity: `Id`, `Title`, `IsComplete` (bool)
+- [x] In-memory storage (List<Task>) – no database needed
+- [x] Task entity: `Id`, `Title`, `IsComplete` (bool)
 
 #### Frontend (Angular 17+)
-- [ ] Display list of tasks
-- [ ] Form to add new task
-- [ ] Delete button per task
-- [ ] Checkbox to mark task complete
-- [ ] Basic styling (CSS or Tailwind)
+- [x] Display list of tasks
+- [x] Form to add new task
+- [x] Delete button per task
+- [x] Checkbox to mark task complete
+- [x] Basic styling (CSS or Tailwind)
 
 #### Docker
-- [ ] Dockerfile for backend
-- [ ] Dockerfile for frontend (nginx serving Angular build)
-- [ ] `docker-compose.yml` to run both services together
+- [x] Dockerfile for backend
+- [x] Dockerfile for frontend (nginx serving Angular build)
+- [x] `docker-compose.yml` to run both services together
 
 ---
 
