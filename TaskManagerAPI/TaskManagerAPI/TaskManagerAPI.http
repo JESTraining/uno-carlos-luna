@@ -1,0 +1,16 @@
+@TaskManagerAPI_HostAddress = http://localhost:5200
+
+### Get all tasks
+GET {{TaskManagerAPI_HostAddress}}/api/tasks
+Accept: application/json
+
+### Create task
+POST {{TaskManagerAPI_HostAddress}}/api/tasks
+Content-Type: application/json
+
+{
+  "title": "My first task"
+}
+
+### Delete task
+DELETE {{TaskManagerAPI_HostAddress}}/api/tasks/1

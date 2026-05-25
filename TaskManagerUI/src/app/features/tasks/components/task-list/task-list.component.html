@@ -1,0 +1,14 @@
+@if (tasks().length === 0) {
+  <app-task-empty-state />
+} @else {
+  <ul>
+    @for (task of tasks(); track task.id) {
+      <li
+        task-item
+        [task]="task"
+        (toggled)="toggled.emit($event)"
+        (removed)="removed.emit($event)"
+      ></li>
+    }
+  </ul>
+}

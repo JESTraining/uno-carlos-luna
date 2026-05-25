@@ -1,0 +1,32 @@
+<main class="page">
+  <header class="task-manager-header">
+    <h1>Task Manager</h1>
+  </header>
+
+  @if (store.error(); as errorMessage) {
+    <p class="alert alert-error" role="alert">{{ errorMessage }}</p>
+  }
+
+  <section aria-label="Add task" class="add-task-section">
+    <app-task-form (taskSubmitted)="store.add($event)" [disabled]="store.loading()" />
+  </section>
+
+  <div aria-label="Task container" class="task-container">
+    <section aria-label="Incomplete task list" class="task-list task-list--pending">
+      <h2><span class="task-list__dot" aria-hidden="true"></span>Incomplete Tasks</h2>
+      <app-task-list
+        [tasks]="incompleteTasks()"
+        (toggled)="store.toggle($event)"
+        (removed)="store.remove($event)"
+      />
+    </section>
+    <section aria-label="Completed task list" class="task-list task-list--done">
+      <h2><span class="task-list__dot" aria-hidden="true"></span>Completed Tasks</h2>
+      <app-task-list
+        [tasks]="completedTasks()"
+        (toggled)="store.toggle($event)"
+        (removed)="store.remove($event)"
+      />
+    </section>
+  </div>
+</main>

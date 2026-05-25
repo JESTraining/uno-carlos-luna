@@ -1,0 +1,21 @@
+services:
+  api:
+    build:
+      context: ./TaskManagerAPI
+      dockerfile: Dockerfile
+    container_name: task-manager-api
+    expose:
+      - "8080"
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_ENVIRONMENT: Production
+
+  web:
+    build:
+      context: ./TaskManagerUI
+      dockerfile: Dockerfile
+    container_name: task-manager-web
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
